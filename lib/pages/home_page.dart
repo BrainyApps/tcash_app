@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rnd_flutter_app/pages/internet_connectivity_monitor.dart';
 import 'package:rnd_flutter_app/pages/transaction_history.dart';
 import 'package:rnd_flutter_app/provider/login_provider.dart';
 import 'package:rnd_flutter_app/routes/app_routes.dart';
@@ -51,17 +52,26 @@ class GridItem extends StatelessWidget {
 
 class _HomePageState extends State<HomePage> {
   late ScrollController _scrollController;
+  bool _hasConnection = true;
   @override
   void initState() {
     super.initState();
+    InternetConnectivityMonitor().onConnectivityChanged =
+        _updateConnectionStatus;
     _scrollController = ScrollController();
     context.read<AuthProvider>().token;
   }
 
   @override
   void dispose() {
+    InternetConnectivityMonitor().dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+  void _updateConnectionStatus(bool hasConnection) {
+    setState(() {
+      _hasConnection = hasConnection;
+    });
   }
 
   @override
@@ -74,8 +84,8 @@ class _HomePageState extends State<HomePage> {
           iconTheme: const IconThemeData(
             color: Colors.black,
           ),
-          title: Row(
-            children: const <Widget>[
+          title: const Row(
+            children: <Widget>[
               CircleAvatar(
                 backgroundImage: NetworkImage(
                     'https://avatars.githubusercontent.com/u/113003788'),

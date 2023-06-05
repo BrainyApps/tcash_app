@@ -86,7 +86,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 20.0),
             Container(
               width: MediaQuery.of(context).size.width * 0.5,
               child: ElevatedButton(
