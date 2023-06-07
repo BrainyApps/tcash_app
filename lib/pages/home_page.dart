@@ -6,6 +6,7 @@ import 'package:rnd_flutter_app/pages/transaction_history.dart';
 import 'package:rnd_flutter_app/pages/user_profile.dart';
 import 'package:rnd_flutter_app/provider/login_provider.dart';
 import 'package:rnd_flutter_app/routes/app_routes.dart';
+import 'package:rnd_flutter_app/widgets/coming_soon.dart';
 import 'package:rnd_flutter_app/widgets/home_appbar.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,41 +16,59 @@ class HomePage extends StatefulWidget {
 }
 
 class GridItem extends StatelessWidget {
-  // const GridItem({super.key});
   final String title;
   final IconData icon;
   final Function()? onTap;
-  @override
-  // ignore: overridden_fields
-  final Key? key;
-  const GridItem(
-      {this.key, required this.title, required this.icon, required this.onTap})
-      : super(key: key);
+
+  const GridItem({
+    Key? key,
+    required this.title,
+    required this.icon,
+    required this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(10),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final parentWidth = constraints.maxWidth;
+        final parentHeight = constraints.maxHeight;
+
+        final iconSize = parentHeight * 0.5;
+        final textSize = parentHeight * 0.10; 
+
+        return GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: parentWidth,
+            height: parentHeight,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: Colors.pink.shade300,
+                  size: iconSize,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.pink.shade400,
+                    fontSize: textSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 30,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                title,
-                style: const TextStyle(fontSize: 10),
-              ),
-            ],
-          ),
-        ));
+        );
+      },
+    );
   }
 }
 
@@ -85,68 +104,15 @@ class _HomePageState extends State<HomePage> {
           initialBalance: 500,
             openAppDrawer: openAppDrawer
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(10.0),
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: const Offset(0, 1), // changes position of shadow
-                    ),
-                  ],
-                ),
-                margin: const EdgeInsets.only(bottom: 20),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(
-                          left: 20.0, top: 8.0, bottom: 8.0),
-                      alignment: Alignment.centerLeft,
-                      child: const Text(
-                        'Current Balance',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 59, 163, 243),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      alignment: Alignment.centerLeft,
-                      child: const Row(children: [
-                        Expanded(
-                            child: Text(
-                          '৳ 100.00',
-                          style: TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.bold),
-                        )),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.blue,
-                            radius: 20,
-                            child: Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
-                        )
-                      ]),
-                    ),
-                  ],
-                ),
-              ),
-              GridView.count(
+        body: Padding(
+            padding: const EdgeInsets.all(
+                10.0),
+          child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: [
+                      Container(
+                  child: GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 4,
@@ -164,7 +130,15 @@ class _HomePageState extends State<HomePage> {
                   GridItem(
                       key: UniqueKey(),
                       title: 'Add Money',
-                      onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ComingSoonPage(featureName: 'Add Money'),
+                              ),
+                            );
+                          },
                       icon: Icons.attach_money),
                   GridItem(
                       key: UniqueKey(),
@@ -182,9 +156,65 @@ class _HomePageState extends State<HomePage> {
                             context, AppRoutes.payment);
                       },
                       icon: Icons.payment),
+                      GridItem(
+                          key: UniqueKey(),
+                          title: 'Pay Bill',
+                          icon: Icons.payment,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ComingSoonPage(featureName: "Pay Bill"),
+                              ),
+                            );
+                          }),
+                      GridItem(
+                          key: UniqueKey(),
+                          title: 'Mobile Recharge',
+                          icon: Icons.phone_android,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ComingSoonPage(
+                                    featureName: "Mobile Recharge"),
+                              ),
+                            );
+                          }),
+                      GridItem(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ComingSoonPage(featureName: "Savings"),
+                            ),
+                          );
+                        },
+                        key: UniqueKey(),
+                        title: 'Savings',
+                        icon: Icons.account_balance_wallet,
+                      ),
+                      GridItem(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ComingSoonPage(featureName: "Loan"),
+                            ),
+                          );
+                        },
+                        key: UniqueKey(),
+                        title: 'Loan',
+                        icon: Icons.monetization_on,
+                      ),
+    
                 ],
               ),
-              Container(
+                      ),
+                      Container(
                   margin: const EdgeInsets.only(top: 15),
                   padding: const EdgeInsets.all(20),
                   width: double.infinity,
@@ -197,42 +227,45 @@ class _HomePageState extends State<HomePage> {
                         spreadRadius: 1,
                         blurRadius: 2,
                         offset:
-                            const Offset(0, 1), // changes position of shadow
+                            const Offset(0, 1), 
                       ),
                     ],
                   ),
-                  child: const Row(
+                          child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                                  const Text(
                             'Financial Management',
                             style: TextStyle(
-                              color: Colors.black,
+                                      color: Colors.black,
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                                      fontSize: 16,
                             ),
                           ),
-                          SizedBox(height: 8),
+                                  const SizedBox(height: 8),
                           Text(
                             'Your expense today ৳ 24',
                             style: TextStyle(
-                              color: Colors.black,
+                                      color: Colors.pink.shade400,
                               fontSize: 16,
                             ),
                           ),
                         ],
                       ),
-                      Column(
+                              const Column(
                         children: [
-                          Icon(Icons.arrow_forward_ios),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.pink,
+                                  ),
                         ],
                       )
                     ],
                   )),
-              Container(
+                Container(
                 height: 215,
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.only(left: 10, right: 10),
@@ -253,7 +286,9 @@ class _HomePageState extends State<HomePage> {
                     controller: _scrollController,
                     child: const TransactionHistory()),
               )
-            ],
+              
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(
