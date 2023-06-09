@@ -46,6 +46,7 @@ class _PasswordConfirmState extends State<PasswordConfirm> {
       type: CoolAlertType.success,
       text: "Your transaction was successful!",
       // closeOnConfirmBtnTap: true,
+      barrierDismissible: false,
       onConfirmBtnTap: () {
         Navigator.push(
           context,
