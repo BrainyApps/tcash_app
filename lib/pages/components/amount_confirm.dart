@@ -156,7 +156,7 @@ class _AmountConfirmState extends State<AmountConfirm> {
     double charge = 0;
     if (widget.transactionType == 1) {
       charge = userType != 2
-          ? amount > 1000
+          ? amount >= 1000
               ? 5
               : 0
           : 0;
