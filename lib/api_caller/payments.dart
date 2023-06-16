@@ -23,6 +23,26 @@ class Payments {
       return false;
     }
   }
+  Future paymentSendMoney(String accountNumber, String password,
+      String receiverNumber, dynamic amount) async {
+    final url = Uri.parse('${AppUrl.baseUrl}/payment/sendmoney');
+    final requestData = {
+      'accountNumber': accountNumber,
+      'password': password,
+      'receiverNumber': receiverNumber,
+      'amount': amount,
+    };
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(requestData),
+      );
+      return response;
+    } catch (e) {
+      return false;
+    }
+  }
 
   Future userExpenditureAndDeposit(String accountNumber) async {
     final url = Uri.parse('${AppUrl.baseUrl}/today/expense');

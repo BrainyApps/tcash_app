@@ -15,13 +15,15 @@ class PasswordConfirm extends StatefulWidget {
   final double? amount;
   final double? remainingBalance;
   final double? charge;
+  final int? transactionType;
 
   const PasswordConfirm(
       {Key? key,
       this.accountNo,
       this.amount,
       this.remainingBalance,
-      this.charge})
+      this.charge,
+      this.transactionType})
       : super(key: key);
 
   @override
@@ -93,12 +95,27 @@ class _PasswordConfirmState extends State<PasswordConfirm> {
     final mobileNo = user?.mobileNo;
     if (mobileNo != null) {
       final payments = Payments();
-      final response = await payments.paymentCashOut(
-        mobileNo,
-        pinController.text,
-        widget.accountNo.toString(),
-        widget.amount,
-      );
+      dynamic response;
+      switch (widget.transactionType) {
+        case 1:
+          response = await payments.paymentSendMoney(
+            mobileNo,
+            pinController.text,
+            widget.accountNo.toString(),
+            widget.amount,
+          );
+          break;
+        case 2:
+          response = await payments.paymentCashOut(
+            mobileNo,
+            pinController.text,
+            widget.accountNo.toString(),
+            widget.amount,
+          );
+          break;
+        default:
+          break;
+      }
       final data = json.decode(response.body);
       setState(() {
         isLoading = false;

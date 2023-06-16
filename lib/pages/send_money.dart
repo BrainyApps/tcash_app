@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
-import 'package:rnd_flutter_app/routes/app_routes.dart';
+import 'package:provider/provider.dart';
+import 'package:rnd_flutter_app/api_caller/validate_account.dart';
+import 'package:rnd_flutter_app/pages/qr_code_widget.dart';
+import 'package:rnd_flutter_app/provider/login_provider.dart';
+import 'package:rnd_flutter_app/variables/transaction_types.dart';
 import 'package:rnd_flutter_app/widgets/custom_appbar.dart';
 import 'package:rnd_flutter_app/widgets/custom_button.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:rnd_flutter_app/pages/components/amount_confirm.dart';
 
 class SendMoneyPage extends StatefulWidget {
   const SendMoneyPage({Key? key}) : super(key: key);
@@ -14,55 +20,72 @@ class SendMoneyPage extends StatefulWidget {
 class _SendMoneyPageState extends State<SendMoneyPage> {
   final TextEditingController _accountNumberController =
       TextEditingController();
-  final TextEditingController _amountController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  double availableBalance = 500.00; // Replace with actual balance
-  String phoneNumber = '';
+  bool isLoading = false;
 
   @override
   void dispose() {
     _accountNumberController.dispose();
-    _amountController.dispose();
     super.dispose();
+  }
+
+  navigateToAmountConfirm(String personalAccount) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AmountConfirm(
+              accountNo: personalAccount,
+              transactionType: TransactionTypes.sendMoney),
+        ),
+      );
+    });
+  }
+
+  validateAgentAccount(String personalAccount) async {
+    setState(() {
+      isLoading = true;
+    });
+    bool isValid = await AccountValidate().validatePersonal(personalAccount);
+
+    if (isValid) {
+      navigateToAmountConfirm(personalAccount);
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      showToastNotValid();
+    }
+    // setState(() {
+    //   isLoading = false;
+    // });
+
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      String accountNumber = _accountNumberController.text;
-      double amount = double.parse(_amountController.text);
+      String phoneNumber = _accountNumberController.text;
+      validateAgentAccount(phoneNumber);
       _accountNumberController.clear();
-      _amountController.clear();
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
     }
   }
 
-  String? _validateAccountNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your account number';
-    }
-    if (value.length != 11) {
-      return 'Account number must be exactly 11 digits';
-    }
-    return null;
-  }
-
-  String? _validateAmount(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter the amount';
-    }
-    double amount = double.tryParse(value) ?? 0;
-    if (amount <= 0) {
-      return 'Amount must be greater than zero';
-    }
-    if (amount > availableBalance) {
-      return 'Amount exceeds available balance';
-    }
-    return null;
+  void showToastNotValid() {
+    Fluttertoast.showToast(
+      msg: 'Personal account not valid',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.TOP,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = Provider.of<AuthProvider>(context);
+    final myNumber = authState.userDetails?.mobileNo;
     return Scaffold(
       appBar: const CustomAppBar(
           content: Text(
@@ -73,78 +96,97 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
           color: Colors.white,
         ),
       )),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    flex: 5,
-                    child: TextFormField(
-                      keyboardType: TextInputType.phone,
-                      maxLength: 11,
-                      controller: _accountNumberController,
-                      decoration: const InputDecoration(
-                        labelText: 'Account Number',
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: TextFormField(
+                            keyboardType: TextInputType.phone,
+                            maxLength: 11,
+                            controller: _accountNumberController,
+                            decoration: const InputDecoration(
+                              labelText: 'Account Number',
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your account number';
+                              } else if (value.length != 11) {
+                                return 'Account number must be 11 digits';
+                              } else if (value == myNumber) {
+                                return 'Account not a valid number';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 16.0),
+                        Expanded(
+                          flex: 1,
+                          child: IconButton(
+                            icon: const Icon(Icons.contacts),
+                            onPressed: () async {
+                              final PhoneContact contact =
+                                  await FlutterContactPicker.pickPhoneContact();
+
+                              final String? phoneNumber =
+                                  contact.phoneNumber!.number;
+                              if (phoneNumber != null) {
+                                setState(() {
+                                  _accountNumberController.text = phoneNumber;
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8.0),
+                    Column(
+                      children: [
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Scan',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                        SizedBox(
+                          width: 70,
+                          child: ElevatedButton(
+                            child: const Icon(Icons.qr_code),
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const QRViewExample(),
+                              ));
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.70,
+                      child: CustomButton(
+                        content: const Text(
+                          "Next",
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: _submitForm,
                       ),
-                      validator: _validateAccountNumber,
                     ),
-                  ),
-                  const SizedBox(width: 16.0),
-                  Expanded(
-                    flex: 1,
-                    child: IconButton(
-                      icon: const Icon(Icons.contacts),
-                      onPressed: () async {
-                        final PhoneContact contact =
-                            await FlutterContactPicker.pickPhoneContact();
-                        setState(() {
-                          phoneNumber = contact.toString();
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                maxLength: 5,
-                controller: _amountController,
-                decoration: const InputDecoration(
-                  labelText: 'Amount',
+                  ],
                 ),
-                validator: _validateAmount,
-              ),
-              const SizedBox(height: 16.0),
-              Text(
-                'Available Balance: \$${availableBalance.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              SizedBox(
-                width: double.infinity,
-                child: CustomButton(
-                  content: const Text(
-                    "Next",
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+              )),
     );
   }
 }

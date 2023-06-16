@@ -20,4 +20,22 @@ class AccountValidate {
       return false;
     }
   }
+
+  Future<bool> validatePersonal(String accountnumber) async {
+    final url = Uri.parse('${AppUrl.baseUrl}/validate/personal');
+    try {
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'accountnumber': accountnumber
+      });
+      final data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        return data['validate'];
+      } else {
+        return data['validate'];
+      }
+    } catch (e) {
+      return false;
+    }
+  }
 }

@@ -243,9 +243,9 @@ Future<void> userExpenditureAndDeposits() async {
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 15),
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(25),
                   width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.15,
+                  height: MediaQuery.of(context).size.height * 0.2,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -292,14 +292,14 @@ Future<void> userExpenditureAndDeposits() async {
                                 ),
                               ],
                             ),
-                            const Column(
-                              children: [
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.pink,
-                                ),
-                              ],
-                            ),
+                            // const Column(
+                            //   children: [
+                            //     Icon(
+                            //       Icons.arrow_forward_ios,
+                            //       color: Colors.pink,
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         ),
                 ),

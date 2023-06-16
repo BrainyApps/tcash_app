@@ -88,6 +88,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
           'assets/icons/send.png',
         );
       case "Cash In":
+      case "Receive Money":
         return const AssetImage(
           'assets/icons/cash_in.png',
         );
