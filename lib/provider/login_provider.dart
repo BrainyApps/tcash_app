@@ -74,7 +74,8 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> register(
-      String mobileNo, String email, String password, int userTypeIndex) async {
+      String mobileNo, String email, String password,
+      String referralNo, int userTypeIndex) async {
     try {
       final url = Uri.parse('${AppUrl.baseUrl}/register');
       setLoading(true);
@@ -86,6 +87,7 @@ class AuthProvider extends ChangeNotifier {
             'mobileNo': mobileNo,
             'password': password,
             'email': email,
+            "referralNo": referralNo,
             'userType': userTypeIndex
           },
         ),

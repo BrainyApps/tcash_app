@@ -17,6 +17,8 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _refererController = TextEditingController();
+  bool _isReferralProvided = false;
   String _userType = 'Personal';
   final List<String> _userTypes = ['Personal', 'Agent', 'Merchant'];
 
@@ -34,16 +36,27 @@ class _SignupPageState extends State<SignupPage> {
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       String mobileNo = _mobileNoController.text;
+      String referralNo = _refererController.text;
       String email = _emailController.text;
       String password = _passwordController.text;
+
       int userTypeIndex = _userTypes.indexOf(_userType);
       Provider.of<AuthProvider>(context, listen: false)
-          .register(mobileNo, email, password, userTypeIndex + 1);
+          .register(mobileNo, email, password, referralNo, userTypeIndex + 1);
+      _refererController.clear();
       _mobileNoController.clear();
       _emailController.clear();
       _passwordController.clear();
       _confirmPasswordController.clear();
     }
+  }
+
+  bool isValidPhoneNumber(String? input) {
+    if (input == null || input.isEmpty) {
+      return false;
+    }
+    String sanitizedInput = input.replaceAll(RegExp(r'\D'), '');
+    return sanitizedInput.length == 11;
   }
 
   final textFieldFocusNode = FocusNode();
@@ -70,7 +83,9 @@ class _SignupPageState extends State<SignupPage> {
       return const LoginPage();
     }
     return Scaffold(
-      body: SingleChildScrollView(
+      body: authState.isLoading
+          ? const CircularProgressIndicator()
+          : SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(20.0),
           child: Form(
@@ -122,8 +137,7 @@ class _SignupPageState extends State<SignupPage> {
                   decoration: InputDecoration(
                     labelText: 'Mobile Number',
                     border: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(8), 
+                            borderRadius: BorderRadius.circular(8),
                     ),
                     prefixIcon: const Icon(Icons.phone_rounded, size: 24),
                   ),
@@ -160,7 +174,7 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20.0),
+                      const SizedBox(height: 15.0),
                 TextFormField(
                   enabled: !authState.isLoading,
                   controller: _passwordController,
@@ -236,6 +250,45 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                 ),
+                      const SizedBox(height: 6.0),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _isReferralProvided,
+                            onChanged: (newValue) {
+                              setState(() {
+                                _isReferralProvided = newValue!;
+                              });
+                            },
+                          ),
+                          const Text('I have a referral'),
+                        ],
+                      ),
+                      if (_isReferralProvided) ...[
+                        TextFormField(
+                          controller: _refererController,
+                          keyboardType: TextInputType.phone,
+                          maxLength: 11,
+                          decoration: InputDecoration(
+                            prefixIcon:
+                                const Icon(Icons.phone_rounded, size: 24),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            labelText: 'Referer\'s Contact Number (optional)',
+                          ),
+                          validator: (value) {
+                            if (_isReferralProvided &&
+                                (value == null || value.isEmpty)) {
+                              return 'Please enter the referer\'s contact number.';
+                            } else if (_isReferralProvided &&
+                                !isValidPhoneNumber(value)) {
+                              return 'Please enter a valid 11-digit contact number.';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
                 const SizedBox(height: 10.0),
                 DropdownButtonFormField<String>(
                   value: _userType,
@@ -243,7 +296,7 @@ class _SignupPageState extends State<SignupPage> {
                     labelText: 'User Type',
                     border: OutlineInputBorder(
                       borderRadius:
-                          BorderRadius.circular(8), // Apply corner radius
+                          BorderRadius.circular(8), 
                     ),
                     prefixIcon: const Icon(Icons.arrow_drop_down),
                   ),
@@ -273,9 +326,7 @@ class _SignupPageState extends State<SignupPage> {
                     width: double.infinity,
                     height: 50.0,
                     child: CustomButton(
-                      content: authState.isLoading
-                          ? const CircularProgressIndicator()
-                          : const Text(
+                            content: const Text(
                         "Create Account",
                         style: TextStyle(
                           fontSize: 18.0,
