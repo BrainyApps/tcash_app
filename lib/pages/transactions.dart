@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:rnd_flutter_app/api_caller/transactions.dart';
 import 'package:rnd_flutter_app/provider/login_provider.dart';
 import 'package:rnd_flutter_app/routes/app_routes.dart';
-
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 class TransactionPage extends StatefulWidget {
   const TransactionPage({super.key});
   @override
@@ -12,6 +12,9 @@ class TransactionPage extends StatefulWidget {
 }
 
 class _TransactionPageState extends State<TransactionPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey =
+      GlobalKey<LiquidPullToRefreshState>();
   String currentFilter = 'ALL';
   String? mobileNumber = '';
   List transactions = [];
@@ -62,9 +65,14 @@ class _TransactionPageState extends State<TransactionPage> {
     });
   }
 
+
+  Future<void> refreshPage() async {
+    await fetchTransactionHistory(mobileNumber);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -74,7 +82,11 @@ class _TransactionPageState extends State<TransactionPage> {
         ),
         title: const Text('Transaction History'),
       ),
-      body: Column(
+        body: LiquidPullToRefresh(
+          key: _refreshIndicatorKey,
+          onRefresh: refreshPage,
+          // showChildOpacityTransition: false,
+          child: Column(
         children: [
           Container(
             color: Colors.grey[200],
@@ -121,7 +133,8 @@ class _TransactionPageState extends State<TransactionPage> {
                   ),
                 ),
         ],
-      ),
+          ),
+        )
     );
   }
 

@@ -28,6 +28,7 @@ dependencies:
   fluttertoast: ^8.0.8
   autocomplete_textfield: 2.0.1
   flutter_typeahead: ^4.2.0
+  liquid_pull_to_refresh: ^3.0.1
 
 
 dev_dependencies:
