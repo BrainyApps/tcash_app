@@ -96,7 +96,7 @@ class _AppDrawerState extends State<AppDrawer> {
               leading: Icon(Icons.support, color: Colors.pink.shade400),
               title: const Text('Support'),
               onTap: () {
-                // Handle onTap
+                Navigator.pushReplacementNamed(context, AppRoutes.appsupport);
               },
             ),
             ListTile(

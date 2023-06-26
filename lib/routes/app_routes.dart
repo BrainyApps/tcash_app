@@ -9,6 +9,7 @@ import 'package:rnd_flutter_app/pages/payment_page.dart';
 import 'package:rnd_flutter_app/pages/send_money.dart';
 import 'package:rnd_flutter_app/pages/signup_page.dart';
 import 'package:rnd_flutter_app/pages/splash_screen.dart';
+import 'package:rnd_flutter_app/pages/supports.dart';
 import 'package:rnd_flutter_app/pages/tcash_login.dart';
 import 'package:rnd_flutter_app/pages/transactions.dart';
 import 'package:rnd_flutter_app/provider/login_provider.dart';
@@ -26,6 +27,7 @@ class AppRoutes {
   static const String passwordconfirm = '/passwordconfirm';
   static const String addmoney = '/addmoney';
   static const String tranaction = '/tranaction';
+  static const String appsupport = '/appsupport';
 
   static Map<String, WidgetBuilder> routes = {
     splashscreen: (context) => const SplashScreen(),
@@ -55,8 +57,14 @@ class AppRoutes {
           page: const PasswordConfirm(),
           isAuthenticated: Provider.of<AuthProvider>(context).isAuthenticated,
         ),
+    appsupport: (context) => AuthenticatedRoute(
+        page: const SupportPage(),
+        isAuthenticated: Provider.of<AuthProvider>(context).isAuthenticated),
+
     addmoney: (context) => AddMoneyPage(),
-    tranaction: (context) => TransactionPage(),
+    tranaction: (context) => AuthenticatedRoute(
+        page: const TransactionPage(),
+        isAuthenticated: Provider.of<AuthProvider>(context).isAuthenticated),
 
   };
 }
