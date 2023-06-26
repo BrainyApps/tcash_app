@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rnd_flutter_app/pages/add_money.dart';
 import 'package:rnd_flutter_app/pages/cashout_page.dart';
 import 'package:rnd_flutter_app/pages/components/amount_confirm.dart';
 import 'package:rnd_flutter_app/pages/components/password_confirm.dart';
@@ -9,6 +10,7 @@ import 'package:rnd_flutter_app/pages/send_money.dart';
 import 'package:rnd_flutter_app/pages/signup_page.dart';
 import 'package:rnd_flutter_app/pages/splash_screen.dart';
 import 'package:rnd_flutter_app/pages/tcash_login.dart';
+import 'package:rnd_flutter_app/pages/transactions.dart';
 import 'package:rnd_flutter_app/provider/login_provider.dart';
 import 'package:rnd_flutter_app/widgets/authenticate_checker.dart';
 
@@ -22,6 +24,8 @@ class AppRoutes {
   static const String cashout = '/cashout';
   static const String amountconfirm = '/amountconfirm';
   static const String passwordconfirm = '/passwordconfirm';
+  static const String addmoney = '/addmoney';
+  static const String tranaction = '/tranaction';
 
   static Map<String, WidgetBuilder> routes = {
     splashscreen: (context) => const SplashScreen(),
@@ -51,5 +55,8 @@ class AppRoutes {
           page: const PasswordConfirm(),
           isAuthenticated: Provider.of<AuthProvider>(context).isAuthenticated,
         ),
+    addmoney: (context) => AddMoneyPage(),
+    tranaction: (context) => TransactionPage(),
+
   };
 }

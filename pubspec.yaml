@@ -26,6 +26,8 @@ dependencies:
   cool_alert: ^2.0.1
   shared_preferences: ^2.1.2
   fluttertoast: ^8.0.8
+  autocomplete_textfield: 2.0.1
+  flutter_typeahead: ^4.2.0
 
 
 dev_dependencies:

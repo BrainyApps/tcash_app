@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rnd_flutter_app/provider/login_provider.dart';
 import 'package:rnd_flutter_app/provider/user_provider.dart';
+import 'package:rnd_flutter_app/routes/app_routes.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -74,7 +75,7 @@ class _AppDrawerState extends State<AppDrawer> {
               leading: Icon(Icons.bar_chart, color: Colors.pink.shade400),
               title: const Text('Statement'),
               onTap: () {
-                // Handle onTap
+                Navigator.pushReplacementNamed(context, AppRoutes.tranaction);
               },
             ),
             ListTile(

@@ -15,43 +15,6 @@ class TransactionHistory extends StatefulWidget {
 
 class _TransactionHistoryState extends State<TransactionHistory> {
   bool isLoading = false;
-  final List<Map<String, dynamic>> transactions = [
-    {
-      'receiver': 'Nahid Hasan',
-      'picture': 'https://avatars.githubusercontent.com/u/113003788',
-      'amount': '50',
-      'type': 'Payment',
-      "debited": false
-    },
-    {
-      'receiver': 'Jane Smith',
-      'picture': 'https://avatars.githubusercontent.com/u/113003788',
-      'amount': '20',
-      'type': 'Cash In',
-      "debited": true
-    },
-    {
-      'receiver': 'Bob Johnson',
-      'picture': 'https://avatars.githubusercontent.com/u/113003788',
-      'amount': '100.00',
-      'type': 'Send Money',
-      "debited": false
-    },
-    {
-      'receiver': 'Jane Smith',
-      'picture': 'https://avatars.githubusercontent.com/u/113003788',
-      'amount': '20.00',
-      'type': 'Recharge',
-      "debited": false
-    },
-    {
-      'receiver': 'Bob Johnson',
-      'picture': 'https://avatars.githubusercontent.com/u/113003788',
-      'amount': '100.00',
-      'type': 'Send Money',
-      "debited": false
-    },
-  ];
   @override
   void initState() {
     super.initState();
