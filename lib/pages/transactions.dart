@@ -144,7 +144,7 @@ class _TransactionPageState extends State<TransactionPage> {
     final textColor = isSelected ? Colors.black : Colors.grey;
 
     return Container(
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.only(left: 8, right: 8, top: 5),
       child: TextButton(
         onPressed: () {
           setState(() {
@@ -154,9 +154,8 @@ class _TransactionPageState extends State<TransactionPage> {
         style: TextButton.styleFrom(
           foregroundColor: textColor,
           backgroundColor: buttonColor,
-          padding: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(4),
           ),
           side: const BorderSide(color: Colors.grey),
         ),
