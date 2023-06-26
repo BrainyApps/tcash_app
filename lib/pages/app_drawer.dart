@@ -82,7 +82,7 @@ class _AppDrawerState extends State<AppDrawer> {
               leading: Icon(Icons.assessment, color: Colors.pink.shade400),
               title: const Text('Limit'),
               onTap: () {
-                // Handle onTap
+                Navigator.pushReplacementNamed(context, AppRoutes.limits);
               },
             ),
             ListTile(

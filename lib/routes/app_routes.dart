@@ -5,6 +5,7 @@ import 'package:rnd_flutter_app/pages/cashout_page.dart';
 import 'package:rnd_flutter_app/pages/components/amount_confirm.dart';
 import 'package:rnd_flutter_app/pages/components/password_confirm.dart';
 import 'package:rnd_flutter_app/pages/home_page.dart';
+import 'package:rnd_flutter_app/pages/limit_page.dart';
 import 'package:rnd_flutter_app/pages/payment_page.dart';
 import 'package:rnd_flutter_app/pages/send_money.dart';
 import 'package:rnd_flutter_app/pages/signup_page.dart';
@@ -28,6 +29,7 @@ class AppRoutes {
   static const String addmoney = '/addmoney';
   static const String tranaction = '/tranaction';
   static const String appsupport = '/appsupport';
+  static const String limits = '/limits';
 
   static Map<String, WidgetBuilder> routes = {
     splashscreen: (context) => const SplashScreen(),
@@ -64,6 +66,9 @@ class AppRoutes {
     addmoney: (context) => AddMoneyPage(),
     tranaction: (context) => AuthenticatedRoute(
         page: const TransactionPage(),
+        isAuthenticated: Provider.of<AuthProvider>(context).isAuthenticated),
+    limits: (context) => AuthenticatedRoute(
+        page: const LimitPage(),
         isAuthenticated: Provider.of<AuthProvider>(context).isAuthenticated),
 
   };
